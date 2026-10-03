@@ -1,10 +1,8 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, computed, inject, signal, viewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterEvent, RouterLink, RouterLinkActive } from "@angular/router";
 import { AuthService } from '../../../auth/services/auth-service';
 import { ApiErrorCode } from '../../models/ApiErrorCode';
 import { AlertService } from '../alert/alert-service';
-import { exhaustMap, filter, map, of, switchMap, takeLast } from 'rxjs';
-import { toObservable } from '@angular/core/rxjs-interop';
 import { TelegramLink } from '../../../auth/components/telegram-link/telegram-link';
 
 @Component({
@@ -17,12 +15,15 @@ export class Navbar {
   private authService = inject(AuthService);
   private router = inject(Router);
   private alertService = inject(AlertService);
+  private accountMenuRef = viewChild<ElementRef<HTMLElement>>('accountMenuRef');
   activeMenu = signal<boolean>(false);
   activeAccountMenu = signal<boolean>(false);
   showTelegramLink = signal<boolean>(false);
 
   isAuthenticated = this.authService.isAuthenticated;
   currentAccount = this.authService.currentAccount;
+  isTelegramLinked = computed(() => this.currentAccount()?.telegramUserId != null);
+  initial = computed(() => this.currentAccount()?.email?.charAt(0).toUpperCase() ?? '?');
 
   navigateHomePage = () => {
     this.router.navigateByUrl('');
@@ -35,8 +36,28 @@ export class Navbar {
     this.activeAccountMenu.set(false);
   }
 
-  toggleAccountMenu(){
+  toggleAccountMenu() {
     this.activeAccountMenu.update(value => !value);
+  }
+
+  @HostListener('document:click', ['$event'])
+  handleDocumentClick(event: MouseEvent) {
+    if (!this.activeAccountMenu()) return;
+
+    const container = this.accountMenuRef()?.nativeElement;
+    if (container && !container.contains(event.target as Node)) {
+      this.activeAccountMenu.set(false);
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  handleEscape() {
+    this.activeAccountMenu.set(false);
+  }
+
+  openTelegramLink() {
+    this.showTelegramLink.set(true);
+    this.activeAccountMenu.set(false);
   }
 
   authAction(){
@@ -68,7 +89,8 @@ export class Navbar {
     this.activeAccountMenu.set(false);
   }
 
-  telegramUnlinked(){
+  telegramUnlinked() {
+    this.activeAccountMenu.set(false);
     this.authService.unlinkTelegram().subscribe({
       next: () => {
         this.alertService.newAlert({

@@ -26,7 +26,7 @@ public class AdminController {
     }
 
     @PostMapping("/save-games")
-    public ResponseEntity<Void> syncGames(@RequestParam(name = "max_games") @Min(1) @Max(30000) Integer maxGames) {
+    public ResponseEntity<Void> syncGames(@RequestParam(name = "max_games") @Min(1) @Max(10000) Integer maxGames) {
         adminService.saveAppList(maxGames);
 
         return ResponseEntity.accepted().build();

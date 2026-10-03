@@ -1,17 +1,100 @@
-.close-button{
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
+.telegram-dialog {
+    position: fixed;
     display: flex;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
     align-items: center;
     justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    color: var(--text-muted);
-    border-radius: 4px;
-    cursor: pointer;
+    margin: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text-main);
 }
 
-.close-button:hover{
+.telegram-dialog::backdrop {
+    background: rgb(0 0 0 / 0.76);
+    backdrop-filter: blur(5px);
+}
+
+.telegram-modal {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid var(--surface-2);
+    border-radius: 1rem;
+    background: var(--surface-1);
+    text-align: center;
+    box-shadow: 0 1.5rem 5rem rgb(0 0 0 / 0.35);
+}
+
+.telegram-modal h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.telegram-icon {
+    display: flex;
+    width: 4rem;
+    height: 4rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background: rgb(42 171 238 / 0.14);
+    color: #2aabee;
+}
+
+.description {
+    max-width: 22rem;
+    margin: 0;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.action-button {
+    margin-top: 0.5rem;
+}
+
+.hint {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.error-message {
+    margin: 0;
+    color: #ef4444;
+    font-size: 0.875rem;
+}
+
+.close-button {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    display: flex;
+    width: 2.25rem;
+    height: 2.25rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background-color 150ms ease, color 150ms ease;
+}
+
+.close-button:hover {
+    background: var(--surface-2);
     color: var(--text-main);
+}
+
+.close-button:focus-visible,
+.action-button:focus-visible {
+    outline: 2px solid #2aabee;
+    outline-offset: 3px;
 }

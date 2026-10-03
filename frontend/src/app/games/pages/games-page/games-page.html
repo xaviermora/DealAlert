@@ -1,6 +1,12 @@
-<div class="lg:w-8/12 sm:w-11/12 w-fit sm:p-0 px-1.5 mx-auto min-h-screen">
-    <app-games-search-bar (newName)="setSearchName($event)"></app-games-search-bar>
-    <div class="mt-6">
-        <app-games-list [name]="searchGameByName()"></app-games-list>
-    </div>
-</div>
+<main class="games-page mx-auto w-[calc(100%-2rem)] max-w-[76rem] py-[clamp(2rem,5vw,4rem)] sm:w-[calc(100%-3rem)]">
+    <header class="games-heading">
+        <h1>Explorar juegos</h1>
+    </header>
+
+    <section aria-label="Catálogo de juegos">
+        <app-games-search-bar (newName)="setSearchName($event)"></app-games-search-bar>
+        <div class="mt-6">
+            <app-games-list [name]="searchGameByName()"></app-games-list>
+        </div>
+    </section>
+</main>

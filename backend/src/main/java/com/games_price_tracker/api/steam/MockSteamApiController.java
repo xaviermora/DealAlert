@@ -19,12 +19,11 @@ public class MockSteamApiController {
         this.resourceLoader = resourceLoader;
     }
 
-    // Devuelve los appdetails de las apps (appids=10,20,30,40,50,60,70,80,130,220) que estan en el archivo some-steam-data-appdetails.json
     @GetMapping()
     public String getAppDetails() {
         String response=""; 
         try {
-            response = new String(resourceLoader.getResource("classpath:some-steam-data-appdetails.json").getInputStream().readAllBytes()); 
+            response = new String(resourceLoader.getResource("classpath:some-steam-appdetails-data.json").getInputStream().readAllBytes()); 
         } catch (IOException e) {
             System.out.println(e);
         }

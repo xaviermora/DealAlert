@@ -1,34 +1,37 @@
 @let _game = game();
 
-<div class="flex flex-col bg-(--surface-1) hover:bg-(--surface-2) rounded-sm w-full h-full">
-    <div class="relative h-32 w-full">
-        <img class="rounded-t-sm object-cover" fill [ngSrc]="_game.img" [alt]="_game.name">
+<article class="game-card">
+    <div class="game-cover">
+        <img fill [ngSrc]="_game.img" [alt]="'Portada de ' + _game.name" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw">
     </div>
 
-    <div class="flex justify-between mt-1 p-3 flex-1">
-        <div class="flex flex-col justify-between">
-            <span class="game-name">{{_game.name}}</span>
-        
-            @if(_game.priceInfo == undefined){
-            <span>-</span>
-            }@else{
-            <div class="flex flex-col justify-end">
-                @if(_game.priceInfo.discount > 0){
-                <span class="old-price">{{_game.priceInfo.initialPrice/100 | currency}}</span>
-                }
-                <div class="flex gap-2 items-center">
-                    <span>{{_game.priceInfo.finalPrice/100 | currency}} USD</span>
-                    <span [class.text-green-500]="_game.priceInfo.discount > 0">
-                        {{_game.priceInfo.discount > 0 ? "-"+_game.priceInfo.discount+"%" : ''}}
+    <div class="game-details">
+        <h2 class="game-name text-[0.9rem] lg:max-[1200px]:text-[0.82rem]" [title]="_game.name">{{ _game.name }}</h2>
+
+        <div class="game-card-footer">
+          <div class="price-summary">
+            <div class="game-price">
+                @if (_game.priceInfo === undefined) {
+                    <span class="text-(--text-muted)">Precio no disponible</span>
+                } @else {
+                    @if (_game.priceInfo.discount > 0) {
+                        <span class="old-price">{{ _game.priceInfo.initialPrice / 100 | currency:'USD' }}</span>
+                    }
+                    <span class="current-price-row">
+                      <span class="current-price" [class.discount-price]="_game.priceInfo.discount > 0">{{ _game.priceInfo.finalPrice / 100 | currency:'USD' }}</span>
+                      @if (_game.priceInfo.discount > 0) {
+                        <span class="discount-text">-{{ _game.priceInfo.discount }}%</span>
+                      }
                     </span>
-                </div>
+                }
             </div>
-            }
-        </div>
 
-        <div class="flex flex-col justify-between items-center py-1 gap-4">
-            <app-button-price-alert [game]="_game" (alertDeleted)="deletedFromAlert.emit($event)"></app-button-price-alert>
-            <app-steam-store-link [gameSteamUrl]="_game.steamUrl"></app-steam-store-link>
+          </div>
+
+            <div class="game-actions gap-1.5 lg:max-[1200px]:gap-1">
+                <app-button-price-alert [game]="_game" (alertDeleted)="deletedFromAlert.emit($event)"></app-button-price-alert>
+                <app-steam-store-link [gameSteamUrl]="_game.steamUrl"></app-steam-store-link>
+            </div>
         </div>
     </div>
-</div>
+</article>

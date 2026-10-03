@@ -8,6 +8,9 @@ backend/build/
 backend/src/main/resources/application.properties
 backend/src/test/resources/application.properties
 backend/src/test/java/com/games_price_tracker/api/NotifyPriceChangeTest.java
+backend/.idea
+frontend/.idea
+.idea 
 
 ### STS ###
 .apt_generated

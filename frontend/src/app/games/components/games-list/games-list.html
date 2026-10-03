@@ -1,77 +1,41 @@
-@if (games$ | async; as games) {
-    @if(games.data === undefined || games.data.numberOfElements == 0){
-        <span class="text-(--text-muted)">No se encontraron resultados</span>
-    }@else{
-        <div class="overflow-hidden rounded-sm">
-            <table class="hidden md:table md:table-fixed w-full border-collapse">
-                <thead>
-                    <tr>
-                        <th class="w-[6%]"></th>
-                        <th class="lg:w-[63%] w-[59]">Juego</th>
-                        <th class="lg:w-[13%] w-[15%]">Precio</th>
-                        <th class="w-[9%]">%</th>
-                        <th class="w-[11%] lg:w-[9%]"></th>
-                    </tr>
-                </thead>
-        
-                <tbody>
-                    @for (game of games.data!.content; track game.id) {
-                        <tr class="group">
-                            <td>
-                                <app-button-price-alert [game]="game"></app-button-price-alert>
-                            </td>
-        
-                            <td>
-                                <div class="flex gap-2 items-center">
-                                    <img class="mr-1" width="92" height="43" [ngSrc]="game.img" [alt]="game.name" />
-        
-                                    <div class="flex gap-2 game-name items-center">
-                                        <span class="game-name">
-                                            {{ game.name }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </td>
-        
-                            @if(game.priceInfo == undefined){
-                                <td>-</td>
-                                <td>-</td>
-                            }@else{
-                                <td>
-                                    <div class="flex flex-col">
-                                        @if(game.priceInfo.discount > 0){
-                                            <span class="old-price">{{ (game.priceInfo.initialPrice/100) | currency}}</span>
-                                        }
-                                        <span>{{ (game.priceInfo.finalPrice/100) | currency}} USD</span>
-                                    </div>
-                                </td>
-                                
-                                <td>
-                                    <span [class.text-green-500]="game.priceInfo.discount > 0">
-                                        -{{game.priceInfo.discount > 0 ? game.priceInfo.discount+"%" : ''}}
-                                    </span>
-                                </td>
-                            }
-        
-                            <td>
-                                <div class="mx-auto w-fit">
-                                    <app-steam-store-link [gameSteamUrl]="game.steamUrl"></app-steam-store-link>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    
-        <div class="md:hidden grid sm:grid-cols-2 gap-6 w-fit sm:w-full">
-            @for (game of games.data!.content; track game.id) {                
-                <app-game-card [game]="game"></app-game-card>
+@if (games().length > 0) {
+    <div class="games-grid grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+        @for (game of games(); track game.id) {
+            <app-game-card [game]="game"></app-game-card>
+        }
+        @if (loading()) {
+            @for (placeholder of [1, 2, 3, 4]; track placeholder) {
+                <div class="game-skeleton" aria-hidden="true"><span></span><div><i></i><i></i><b></b></div></div>
             }
-        </div>
-    
-        <div class="ml-auto w-fit mt-4">
-            <app-pagination [actualPage]="page()" (actualPageChange)="page.set($event)" [totalPages]="games.data!.totalPages"></app-pagination>
-        </div>
-    }
+        }
+    </div>
+} @else if (loading()) {
+    <div class="games-grid grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4" aria-label="Cargando juegos" aria-busy="true">
+        @for (placeholder of [1, 2, 3, 4, 5, 6, 7, 8]; track placeholder) {
+            <div class="game-skeleton" aria-hidden="true"><span></span><div><i></i><i></i><b></b></div></div>
+        }
+    </div>
+} @else if (loadError()) {
+    <div class="empty-state">
+        <h2>No se pudieron cargar los juegos</h2>
+        <p>Revisá tu conexión e intentá nuevamente.</p>
+        <button type="button" class="secondary-button mt-2" (click)="retryLoading()">Reintentar</button>
+    </div>
+} @else {
+    <div class="empty-state">
+        <span class="empty-state-icon" aria-hidden="true">⌕</span>
+        <h2>No se encontraron juegos</h2>
+        <p>Probá con otro nombre para encontrar lo que buscás.</p>
+    </div>
+}
+
+@if (loadError() && games().length > 0) {
+    <div class="load-error" role="status">
+        <span>No se pudieron cargar más juegos.</span>
+        <button type="button" (click)="retryLoading()">Reintentar</button>
+    </div>
+} @else if (hasMore() && games().length > 0) {
+    <div #loadMoreTrigger class="load-trigger" aria-live="polite">
+        @if (loading()) { <span class="loading-label">Cargando más juegos…</span> }
+    </div>
 }

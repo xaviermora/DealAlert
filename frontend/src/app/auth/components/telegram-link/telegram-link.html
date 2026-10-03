@@ -1,26 +1,29 @@
-<div class="fixed inset-0 z-40 flex items-center justify-center bg-black/70 p-4 text-center">
-    <div class="bg-(--surface-1) mx-auto mt-12 rounded-sm p-6 flex flex-col gap-4 sm:w-fit w-11/12 relative">
+<dialog #dialog class="telegram-dialog p-3 sm:p-4" (click)="onDialogClick($event)" (close)="closed.emit()">
+    <section class="telegram-modal w-full max-w-md px-6 pt-10 pb-8 max-[380px]:px-4 sm:px-10 sm:pt-12 sm:pb-10" aria-labelledby="telegram-title" aria-describedby="telegram-description">
         <button type="button" class="close-button" title="Cerrar" aria-label="Cerrar" (click)="close()">
-            <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 -960 960 960" width="22" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
         </button>
 
-        <h1 class="text-center text-2xl">Vincular Telegram</h1>
+        <div class="telegram-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" height="34" viewBox="0 0 24 24" width="34" fill="currentColor"><path d="M21.9 4.6 18.6 20c-.2 1.1-.9 1.4-1.8.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.3-8.4c.4-.4-.1-.6-.6-.2L6 13.5 1.1 12c-1.1-.3-1.1-1 .2-1.5L20.4 3c.9-.3 1.7.2 1.5 1.6Z"/></svg>
+        </div>
 
-        <p>Recibí las alertas de ofertas en Telegram.</p>
+        <h1 id="telegram-title">Vincular Telegram</h1>
+        <p id="telegram-description" class="description">Recibí las alertas de ofertas directamente en Telegram.</p>
 
         @if(token() === undefined){
-            <button type="button" class="main-button sm:w-fit w-full mx-auto" (click)="linkTelegram()" [disabled]="loadingToken()">
-                Vincular
+            <button type="button" class="main-button action-button w-full sm:w-fit sm:min-w-48" (click)="linkTelegram()" [disabled]="loadingToken()">
+                {{loadingToken() ? 'Preparando vínculo…' : 'Vincular Telegram'}}
             </button>
         }@else {
-            <button type="button" class="main-button sm:w-fit w-full mx-auto" [disabled]="checking()" (click)="checkLink()">
-                {{checking() ? 'Verificando' : 'Ya lo vinculé'}}
+            <button type="button" class="main-button action-button w-full sm:w-fit sm:min-w-48" [disabled]="checking()" (click)="checkLink()">
+                {{checking() ? 'Verificando…' : 'Ya lo vinculé'}}
             </button>
-            <p class="text-(--text-muted) text-sm">Una vez vinculado confirmar haciendo click en el botón.</p>
+            <p class="hint">Después de vincular tu cuenta en Telegram, confirmalo con este botón.</p>
         }
 
         @if(error() !== undefined){
-            <p class="text-red-500">{{error()}}</p>
+            <p class="error-message" role="alert">{{error()}}</p>
         }
-    </div>
-</div>
+    </section>
+</dialog>

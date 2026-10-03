@@ -1,31 +1,109 @@
-tr{
-  height: 2rem;
-  padding: 10px;
-  border-bottom-width: 1px;
-  border-color: var(--surface-2);
+.empty-state {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  padding: 3rem 1.5rem;
+  border: 1px solid var(--surface-2);
+  border-radius: 0.75rem;
+  background: var(--surface-1);
+  text-align: center;
 }
 
-thead tr{
-  border: 0;
+.empty-state-icon {
+  color: var(--main);
+  font-size: 2.5rem;
+  line-height: 1;
 }
 
-th {
-  padding: 0.5rem 0.75rem;
-  text-align: left;
-  background-color: var(--surface-2);
+.empty-state h2 {
+  font-size: 1.125rem;
+  font-weight: 700;
 }
 
-td {
-  padding: 0.5rem 0.75rem;
-  background-color: var(--surface-1);
-  text-align: left;
-  height: 100%;
+.empty-state p {
+  color: var(--text-muted);
+  font-size: 0.875rem;
 }
 
-tr:hover > *{
-  background-color: var(--surface-2);
+.game-skeleton {
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: var(--surface-1);
+  animation: pulse 1.4s ease-in-out infinite;
 }
 
-table tr:last-child{
-  border: 0;
+.game-skeleton > span {
+  display: block;
+  aspect-ratio: 16 / 7;
+  background: var(--surface-2);
+}
+
+.game-skeleton > div {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.75rem;
+}
+
+.game-skeleton i,
+.game-skeleton b {
+  display: block;
+  height: 0.7rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+
+.game-skeleton i:last-of-type {
+  width: 58%;
+}
+
+.game-skeleton b {
+  width: 38%;
+  height: 1rem;
+  margin-top: 0.15rem;
+}
+
+.load-trigger {
+  display: grid;
+  min-height: 2rem;
+  place-items: center;
+  margin-top: 0.5rem;
+}
+
+.loading-label,
+.end-message {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.end-message {
+  padding-block: 1.25rem;
+}
+
+.load-error {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.load-error button {
+  color: var(--main);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.58;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-skeleton {
+    animation: none;
+  }
 }

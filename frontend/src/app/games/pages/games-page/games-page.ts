@@ -1,4 +1,4 @@
-import { Component, effect, model, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { GamesList } from '../../components/games-list/games-list';
 import { GamesSearchBar } from '../../components/games-search-bar/games-search-bar';
 
@@ -9,7 +9,9 @@ import { GamesSearchBar } from '../../components/games-search-bar/games-search-b
   styleUrl: './games-page.css',
 })
 export class GamesPage {
-  searchGameByName = signal<string | undefined>(undefined);  
+  searchGameByName = signal<string | undefined>(undefined);
 
-  setSearchName(name: string){this.searchGameByName.set(name);}
+  setSearchName(name: string): void {
+    this.searchGameByName.set(name || undefined);
+  }
 }

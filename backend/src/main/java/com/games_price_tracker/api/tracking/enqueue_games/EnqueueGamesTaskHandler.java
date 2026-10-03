@@ -6,7 +6,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +27,7 @@ public class EnqueueGamesTaskHandler {
     private final Duration minIntervalGamePriceUpdate;
     private final int maxPagesPerEnqueue; 
     private final Logger log = LoggerFactory.getLogger(EnqueueGamesTaskHandler.class);
-    private AtomicReference<ScheduledFuture<?>> currentTaskScheduled = new AtomicReference<>(null);
+    private ScheduledFuture<?> currentTaskScheduled;
 
     public EnqueueGamesTaskHandler(GameService gameService, FetchAppDetailsTasksHandler fetchAppDetailsTasksHandler, TaskScheduler taskScheduler, SteamApiProperties steamApiProperties, @Value("${price.min-interval-update}") Duration minIntervalGamePriceUpdate){
         this.taskScheduler = taskScheduler;
@@ -39,46 +38,31 @@ public class EnqueueGamesTaskHandler {
     }
 
     public StartEnqueueResult start(int gamesPerRequest){
-        // AtomicReference para setear dentro del getAndUpdate
-        AtomicReference<StartEnqueueResult> result = new AtomicReference<>();
+        if(currentTaskScheduled != null){
+            log.error("Can't start enqueue because there is already one scheduled");
+            return StartEnqueueResult.ENQUEUE_ALREADY_SCHEDULED;
+        }
 
-        currentTaskScheduled.getAndUpdate((taskScheduled) -> {
-            if(taskScheduled == null){
-                task.setGamesPerRequest(gamesPerRequest);
-                result.set(StartEnqueueResult.STARTED);
-                return taskScheduler.schedule(task, Instant.now());
-            }else{
-                log.error("Can't start enqueue because there is already one scheduled");
-                result.set(StartEnqueueResult.ENQUEUE_ALREADY_SCHEDULED);
-                return taskScheduled;
-            }
-        });
-
-        return result.get();
+        task.setGamesPerRequest(gamesPerRequest);
+        currentTaskScheduled = taskScheduler.schedule(task, Instant.now());
+        return StartEnqueueResult.STARTED;
     }
 
     public CancelEnqueueResult cancel(){
-        if(currentTaskScheduled.get() == null){
+        if(currentTaskScheduled == null){
             log.error("Cancel enqueue failed because no enqueue is scheduled");
             return CancelEnqueueResult.NO_ENQUEUE_SCHEDULED;
         }
 
-        AtomicReference<CancelEnqueueResult> result = new AtomicReference<>();
+        boolean canceled = currentTaskScheduled.cancel(false);
+        if(!canceled){
+            log.error("Current enqueue couldn't be canceled");
+            return CancelEnqueueResult.CANCEL_FAILED;
+        }
 
-        currentTaskScheduled.getAndUpdate(taskScheduled -> {
-            boolean canceled = taskScheduled.cancel(false);
-            
-            if(canceled){
-                result.set(CancelEnqueueResult.CANCELED);
-                log.info("Enqueue canceled");
-            }else{
-                result.set(CancelEnqueueResult.CANCEL_FAILED);
-                log.error("Current enqueue couldn't be canceled");
-            }
-            return canceled ? null : taskScheduled;
-        });
-
-        return result.get();
+        currentTaskScheduled = null;
+        log.info("Enqueue canceled");
+        return CancelEnqueueResult.CANCELED;
     }
 
     public void nextExecution(boolean allGamesChecked){
@@ -103,12 +87,10 @@ public class EnqueueGamesTaskHandler {
             schedulingTime = Instant.now().plus(Duration.ofSeconds(delayNextExecution));
         }
 
-        currentTaskScheduled.getAndUpdate((taskScheduled) -> {
-            if(taskScheduled == null) return taskScheduled;
+        if(currentTaskScheduled == null) return;
 
-            log.info("Scheduling next enqueue task");
-            return taskScheduler.schedule(task, schedulingTime);
-        });
+        log.info("Scheduling next enqueue task");
+        currentTaskScheduled = taskScheduler.schedule(task, schedulingTime);
     }
 }
     

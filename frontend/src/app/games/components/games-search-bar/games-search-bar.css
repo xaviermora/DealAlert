@@ -1,0 +1,31 @@
+.search-container {
+  height: 3.25rem;
+  border-radius: 0.625rem;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.search-icon {
+  display: grid;
+  height: 100%;
+  place-items: center;
+  padding-inline: 1rem;
+  color: var(--text-muted);
+}
+
+.search-container:focus-within .search-icon {
+  color: var(--main);
+}
+
+.search-container input {
+  min-width: 0;
+  background: transparent;
+  color: var(--text-main);
+}
+
+.search-container input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-container input::-webkit-search-cancel-button {
+  cursor: pointer;
+}

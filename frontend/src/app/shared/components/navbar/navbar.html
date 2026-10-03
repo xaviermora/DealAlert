@@ -2,72 +2,81 @@
 @let _currentAccount = currentAccount();
 
 <nav class="w-full h-fit bg-(--surface-2) shadow-md">
-    <div class="w-11/12 py-4 h-fit flex sm:flex-row flex-col items-center mx-auto">
-        <div class="flex w-full sm:w-fit">
+    <div class="w-11/12 py-3 h-fit flex sm:flex-row flex-col items-center mx-auto">
+        <div class="flex w-full sm:w-fit items-center">
             <h1 (click)="navigateHomePage()" class="text-lg font-bold tracking-wide mr-8 cursor-pointer">
                 DealAlert
             </h1>
-    
-            <div (click)="toggleMenu()" class="sm:hidden cursor-pointer ml-auto">
+
+            <button type="button" (click)="toggleMenu()" class="sm:hidden cursor-pointer ml-auto p-1 rounded-md hover:bg-white/10" aria-label="Menú">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e5e5e5"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg>
-            </div>
+            </button>
         </div>
-        
-        <div [class]="activeMenu() ? 'flex' : 'hidden'" class="h-full sm:flex sm:flex-row flex-col gap-4 sm:items-center self-start items-start mt-4 sm:mt-0 w-full">
-            <a (click)="activeMenu.set(false)" routerLink="" routerLinkActive="text-(--main)" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
-            <a (click)="activeMenu.set(false)" routerLink="/games" routerLinkActive="text-(--main)" [routerLinkActiveOptions]="{exact: true}">Juegos</a>
+
+        <div [class]="activeMenu() ? 'flex' : 'hidden'" class="sm:flex sm:flex-row flex-col gap-1 sm:items-center self-start items-stretch mt-4 sm:mt-0 w-full">
+            <a (click)="activeMenu.set(false)" routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Inicio</a>
+            <a (click)="activeMenu.set(false)" routerLink="/games" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Juegos</a>
             @if(_isAuthenticated){
-                <a (click)="activeMenu.set(false)" routerLink="/deal-alerts" routerLinkActive="text-(--main)">Mis alertas</a>
+                <a (click)="activeMenu.set(false)" routerLink="/deal-alerts" routerLinkActive="active" class="nav-link">Mis alertas</a>
             }
 
             @if(_isAuthenticated){
-                <div class="relative sm:ml-auto sm:mt-0 mt-1 w-full sm:w-fit">
-                    <button type="button" (click)="toggleAccountMenu()" class="main-button px-3! cursor-pointer w-full sm:w-fit">
-                        <div class="flex items-center justify-center gap-1">
+                <div #accountMenuRef class="relative sm:ml-auto sm:mt-0 mt-2 w-full sm:w-fit">
+                    <button type="button" (click)="toggleAccountMenu()" class="main-button px-3! cursor-pointer w-full sm:w-fit"
+                        aria-haspopup="menu" [attr.aria-expanded]="activeAccountMenu()">
+                        <div class="flex items-center justify-center gap-1.5">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e5e5e5"><path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
                             <span>Cuenta</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"
+                                class="transition-transform duration-150" [class.rotate-180]="activeAccountMenu()">
+                                <path d="M3.2 5.8a.75.75 0 0 1 1.06 0L8 9.54l3.74-3.74a.75.75 0 1 1 1.06 1.06l-4.27 4.27a.75.75 0 0 1-1.06 0L3.2 6.86a.75.75 0 0 1 0-1.06Z"/>
+                            </svg>
                         </div>
                     </button>
 
                     @if(activeAccountMenu()){
-                        <div class="absolute right-0 left-0 sm:left-auto mt-2 w-full sm:w-72 rounded-sm border border-(--surface-2) bg-(--surface-1) shadow-lg z-50 overflow-hidden">
-                            <div class="px-4 py-3 border-b border-(--surface-2)">
-                                <span class="block text-sm text-(--text-muted)">Cuenta</span>
+                        <div role="menu" class="account-dropdown absolute right-0 left-0 sm:left-auto mt-2 w-full sm:w-72 rounded-lg border border-white/10 bg-(--surface-1) shadow-xl z-50 overflow-hidden">
+                            <div class="px-4 py-3 border-b border-white/10">
+                                <span class="block text-xs uppercase tracking-wide text-(--text-muted)">Sesión iniciada como</span>
                                 <span class="block truncate font-semibold">{{_currentAccount?.email}}</span>
                             </div>
 
-                            @if(currentAccount()?.telegramUserId !== null){
-                                <button (click)="telegramUnlinked()" type="button" class="dropdown-option">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telegram" viewBox="0 0 16 16">
-                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.287 5.906q-1.168.486-4.666 2.01-.567.225-.595.442c-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294q.39.01.868-.32 3.269-2.206 3.374-2.23c.05-.012.12-.026.166.016s.042.12.037.141c-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8 8 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629q.14.092.27.187c.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.4 1.4 0 0 0-.013-.315.34.34 0 0 0-.114-.217.53.53 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09"/>
-                                    </svg>
-                                    <span>Desvincular Telegram</span>
-                                </button>
-                            }@else{
-                                <button (click)="showTelegramLink.set(true)" type="button" class="dropdown-option">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telegram" viewBox="0 0 16 16">
-                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.287 5.906q-1.168.486-4.666 2.01-.567.225-.595.442c-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294q.39.01.868-.32 3.269-2.206 3.374-2.23c.05-.012.12-.026.166.016s.042.12.037.141c-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8 8 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629q.14.092.27.187c.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.4 1.4 0 0 0-.013-.315.34.34 0 0 0-.114-.217.53.53 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09"/>
-                                    </svg>
-                                    <span>Vincular Telegram</span>
-                                </button>
-
-                                @if(showTelegramLink()){
-                                    <app-telegram-link (linked)="this.showTelegramLink.set(false)" (closed)="showTelegramLink.set(false)"></app-telegram-link>
+                            <div class="py-1">
+                                @if(_currentAccount?.telegramUserId !== null){
+                                    <button (click)="telegramUnlinked()" type="button" role="menuitem" class="dropdown-option">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.287 5.906q-1.168.486-4.666 2.01-.567.225-.595.442c-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294q.39.01.868-.32 3.269-2.206 3.374-2.23c.05-.012.12-.026.166.016s.042.12.037.141c-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8 8 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629q.14.092.27.187c.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.4 1.4 0 0 0-.013-.315.34.34 0 0 0-.114-.217.53.53 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09"/>
+                                        </svg>
+                                        <span>Desvincular Telegram</span>
+                                    </button>
+                                }@else{
+                                    <button (click)="openTelegramLink()" type="button" role="menuitem" class="dropdown-option">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.287 5.906q-1.168.486-4.666 2.01-.567.225-.595.442c-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294q.39.01.868-.32 3.269-2.206 3.374-2.23c.05-.012.12-.026.166.016s.042.12.037.141c-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8 8 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629q.14.092.27.187c.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.4 1.4 0 0 0-.013-.315.34.34 0 0 0-.114-.217.53.53 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09"/>
+                                        </svg>
+                                        <span>Vincular Telegram</span>
+                                    </button>
                                 }
-                            }
+                            </div>
 
-                            <button type="button" class="dropdown-option" (click)="authAction()">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="currentColor"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
-                                <span>Cerrar sesión</span>
-                            </button>
+                            <div class="py-1 border-t border-white/10">
+                                <button type="button" role="menuitem" class="dropdown-option danger" (click)="authAction()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
+                                    <span>Cerrar sesión</span>
+                                </button>
+                            </div>
                         </div>
+                    }
+
+                    @if(showTelegramLink()){
+                        <app-telegram-link (linked)="showTelegramLink.set(false)" (closed)="showTelegramLink.set(false)"></app-telegram-link>
                     }
                 </div>
             }@else{
-                <button (click)="authAction()" class="main-button px-3! sm:ml-auto cursor-pointer sm:mt-0 mt-1">
-                    <div class="flex items-center gap-0.5">
-                    <svg class="inline" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e5e5e5"><path d="M480-120v-80h280v-560H480v-80h280q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H480Zm-80-160-55-58 102-102H120v-80h327L345-622l55-58 200 200-200 200Z"/></svg>
-                    Iniciar sesión
+                <button (click)="authAction()" class="main-button px-3! sm:ml-auto cursor-pointer sm:mt-0 mt-2">
+                    <div class="flex items-center justify-center gap-1">
+                        <svg class="inline" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e5e5e5"><path d="M480-120v-80h280v-560H480v-80h280q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H480Zm-80-160-55-58 102-102H120v-80h327L345-622l55-58 200 200-200 200Z"/></svg>
+                        Iniciar sesión
                     </div>
                 </button>
             }

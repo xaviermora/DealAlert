@@ -18,7 +18,7 @@
             "price_overview": {
                 "currency": "USD",
                 "initial": 299,
-                "final": 74,
+                "final": 299,
                 "discount_percent": 75,
                 "initial_formatted": "$2.99",
                 "final_formatted": "$0.74 USD"

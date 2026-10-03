@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { AfterViewInit, Component, computed, ElementRef, inject, output, signal, ViewChild } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../services/auth-service';
 import { finalize } from 'rxjs';
@@ -8,7 +8,9 @@ import { finalize } from 'rxjs';
   templateUrl: './telegram-link.html',
   styleUrl: './telegram-link.css',
 })
-export class TelegramLink {
+export class TelegramLink implements AfterViewInit {
+  @ViewChild('dialog') private dialog!: ElementRef<HTMLDialogElement>;
+
   linked = output<void>();
   closed = output<void>();
 
@@ -17,6 +19,10 @@ export class TelegramLink {
   loadingToken = signal<boolean>(false);
   checking = signal<boolean>(false);
   error = signal<string | undefined>(undefined);
+
+  ngAfterViewInit(){
+    this.dialog.nativeElement.showModal();
+  }
 
   telegramUrl = computed(() => {
     const token = this.token();
@@ -69,6 +75,17 @@ export class TelegramLink {
   }
 
   close(){
+    if(this.dialog.nativeElement.open){
+      this.dialog.nativeElement.close();
+      return;
+    }
+
     this.closed.emit();
+  }
+
+  onDialogClick(event: MouseEvent){
+    if(event.target === this.dialog.nativeElement){
+      this.close();
+    }
   }
 }
