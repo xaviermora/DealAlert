@@ -120,5 +120,5 @@ input[type="number"]::-webkit-inner-spin-button {
   outline-offset: 2px;
 }
 
-.game-icon-button[aria-pressed="true"] { color: #55d98a; }
-.game-icon-button[aria-pressed="true"]:hover { color: #7be9a5; }
+/*.game-icon-button[aria-pressed="true"] { color: #e7e7c6; }
+.game-icon-button[aria-pressed="true"]:hover { color: #7be9a5; }*/

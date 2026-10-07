@@ -18,10 +18,14 @@
                         <span class="old-price">{{ _game.priceInfo.initialPrice / 100 | currency:'USD' }}</span>
                     }
                     <span class="current-price-row">
-                      <span class="current-price" [class.discount-price]="_game.priceInfo.discount > 0">{{ _game.priceInfo.finalPrice / 100 | currency:'USD' }}</span>
-                      @if (_game.priceInfo.discount > 0) {
-                        <span class="discount-text">-{{ _game.priceInfo.discount }}%</span>
-                      }
+                        <div>
+                            <span class="current-price" [class.discount-price]="_game.priceInfo.discount > 0">{{ _game.priceInfo.finalPrice / 100 | currency:'USD' }}
+                            </span>
+                            <span class="font-bold" [class.discount-price]="_game.priceInfo.discount > 0">USD</span>
+                        </div>
+                        @if (_game.priceInfo.discount > 0) {
+                            <span class="discount-text">-{{ _game.priceInfo.discount }}%</span>
+                        }
                     </span>
                 }
             </div>

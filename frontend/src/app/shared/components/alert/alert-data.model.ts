@@ -1,6 +1,7 @@
-interface AlertData{
+interface AlertData {
     type: 'success' | 'error',
     text: string,
     actionText?: string,
-    action?: () => void
+    action?: () => void,
+    duration?: number // ms
 }

@@ -1,7 +1,40 @@
-.success{
-    background-color: var(--color-green-600);
+.toast {
+  --accent: #22c55e;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.875rem 0.75rem 0.875rem 0.875rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  background: var(--surface-1);
+  color: var(--text-main);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.35);
+
+  /* hidden state */
+  opacity: 0;
+  transform: translateY(0.75rem) scale(0.98);
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 200ms ease, transform 200ms ease, visibility 0s linear 200ms;
 }
 
-.error{
-    background-color: var(--color-red-600);
+.toast.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.toast[data-type='error'] {
+  --accent: #ef4444;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast,
+  .toast.visible {
+    transform: none;
+    transition-duration: 1ms;
+  }
 }
